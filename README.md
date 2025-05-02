@@ -3,7 +3,8 @@ Web服务器框架，轻松部署web网站
 
 > 视频  [部署演示](https://www.bilibili.com/video/BV1RM4m167gK/)  
 
-### mysql数据库
+### 依赖
+> 点击了解http协议 [ccoong/ccore](https://github.com/ccoong/ccore)  
 > 点击了解数据库的操作 [ccoong/mysqlorm](https://github.com/ccoong/mysqlorm)   
 
 ### 基本信息配置文件
