@@ -54,7 +54,7 @@ public:
         cmd[end_i-start_i+11]='\0';
 
         if(system(cmd) == -1){
-            cc::safe::Log::obj().error("stop停止进程的时候出现错误");
+            throw std::runtime_error("stop停止进程的时候出现错误");
         }
     }
     static void run(int &argc, char *argv[]){

@@ -1,56 +1,58 @@
 # web_server
-Web服务器框架，大小仅8m，它不依赖apache与nginx，搭建非常简单，直接解压缩就可以搭建c++网站了。如果要求不高你甚至不需要了解c++就可以完成一个简单的web服务器（关键开发者就在你身边，所有功能都是我弄的，有啥问题联系我邮箱 a13535@foxmail.com）
+Web服务器框架，轻松部署web网站
 
 > 视频  [部署演示](https://www.bilibili.com/video/BV1RM4m167gK/)  
-> 发布区 [Releases](https://github.com/135356/web_server/releases)
 
-### 依赖mysqlorm
-> https://github.com/135356/mysqlorm 它负责链接mysql，有关数据库的操作都在 [135356/mysqlorm](https://github.com/135356/mysqlorm) 这个项目  
+### mysql数据库
+> 点击了解数据库的操作 [ccoong/mysqlorm](https://github.com/ccoong/mysqlorm)   
 
 ### 基本信息配置文件
 ````c++
-文件路径：./build/13535_webserve.conf
+路径：./build/13535_webserve.conf
 配置信息：
     "IS_GZIP": 1, 是否开启gzip，1为开启0为关闭，开启后会自动将h5文件压缩为gzip格式的文件
-    "IS_COROUTINE": 0, 是否开启协程，1为开启0为关闭，开启后会默认启用10个线程若干个协程，然后平均分配任务
-    "IS_MTB_FILE": 1, 是否开启更多线程来处理大文件，1为开启0为关闭，根据负载分配更多的线程处理超过10m的文件
-    "WEB_DIR": "html", h5文件放哪个位置，比如html就是项目build路径下的html
-    "PORT": 80, 端口号，比如改成了8888，访问链接的时候就需要带上这个端口号，http://localhost:8888
-    "ORIGIN": "*" 白名单，*表示所有链接，如果是多个链接中间用分号;隔开即可（不要有任何不相关的符号包括空格）
+    "WEB_DIR": "html", html文件的路径（项目 build/ 路径下）
+    "PORT": 80, 端口号
+    "ORIGIN": "*" 白名单，*表示所有链接，多个链接请用 ; 隔开
 ````
 
 ### 日志文件
 > *./build/13535.log*
 ### mode层
-> 文件夹的路径：include/mode  
+> 路径：include/mode/  
 > 示例文件: include/mode/dbA1_test.hpp  
-> 负责与数据库交互，比如你可以通过dbA1_test::obj()链接到db_a1数据库的test数据表，通过dbA1_test::obj().insertF("'小明',20,1")这样的方式，你就可以向db_a1数据库的test数据表插入一条数据，有关于mode层的详细介绍在[135356/mysqlorm](https://github.com/135356/mysqlorm)  
+> 负责与数据库交互，dbA1_test 表示db_a1数据库，test数据表。通过 dbA1_test::obj().insertF("'小明',20,1") ，可向db_a1数据库的test数据表插入数据，更多介绍请点击[ccoong/mysqlorm](https://github.com/ccoong/mysqlorm)  
 ### view层
-> 文件夹的路径：build/html  
-> 你可以将自己的h5文件放在build/html目录下，h5文件可以通过vue之类的框架创建，也可以直接写一个index.html文件放里面  
+> 路径：build/html/  
+> html文件的存放位置
 ### Route文件
-> 文件路径：include/web_server/Route.hpp  
-> 你可以直接将api写在这个文件里面，但并不建议这样做，推荐你将api尽量细分后写到 controller层 里面  
+> 路径：include/web_server/Route.hpp  
+> 与客户端交互的主入口  
 ### controller层
-> 文件夹的路径：include/controller  
+> 路径：include/controller/  
 > 示例文件: include/controller/Test.hpp  
-> 负责与客户端交互，比如你可以创建一个post链接配合mode层实现用户注册之类的操作  
-> 需在 Route文件 里面，引入 controller层 的文件，并在 Route文件 的构造函数里面对 controller层 文件进行实例化（并不复杂，你打开 Route文件 看一下就知道了）  
+> 与客户端交互的子入口 比如 post、get 都可以在这个文件夹下面去实现 
+> 创建后的子入口需在 Route.hpp 里引入，并对其进行实例化（具体操作请打开 Route.hpp 文件查看）  
 
 ### 运行说明：
-> 默认端口为80，请确认端口没有被其它程序占用，项目运行后跟Apache一样，在浏览器地址栏输入 http://127.0.0.1 即可
+> 默认端口为80，请确认端口没有被其它程序占用，项目运行后在浏览器地址栏输入 http://localhost 预览
 * linux系统部署：  
-    先下载依赖的库解压到 /usr/local/ 路径下。依赖的库可在[Releases](https://github.com/135356/web_server/releases)下载  
-    再下载项目的源码解压到任意位置都可以，解压缩之后进入到这个项目，创建一个用于存放二进制文件的目录，比如build，然后进入到这个build目录，使用cmake进行编译即可。  
+    1、下载依赖的库，解压到linux系统的 /var 路径下。依赖库请点击右边 Releases 下载；  
+    2、下载源码，解压到用户目录，解压后创建 build，然后在build目录下编译并运行项目，示例: 
 
-    示例：  
-    >
-        git clone https://github.com/135356/web_server.git  
-        cd web_server  
-        mkdir build  
-        cd build  
-        cmake ..  
-        make   
-        运行: ./web_server_run start&  
-        停止: ./web_server_run stop
-* 其它系统部署：暂不支持(懒得用其他平台去编译，关键部分功能比如epoll是不通用的，改起来麻烦)
+            git clone https://github.com/ccoong/web_server.git  
+
+            cd web_server  
+
+            mkdir build  
+
+            cd build  
+
+            cmake ..  
+
+            make   
+    3、运行与停止；
+
+        ./web_server_run start&  //运行  
+        
+        ./web_server_run stop   //停止  
